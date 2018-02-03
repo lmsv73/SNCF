@@ -54,7 +54,8 @@ export class AppComponent {
 
   filter(val: string): string[] {
     return this.villes.filter(
-      option => option['name'].toLowerCase().indexOf(val.toLowerCase()) === 0
+      option => option['name'].toLowerCase().indexOf(val.toLowerCase()) === 0 &&
+        option['embedded_type'] === "stop_area"
     );
   }
 
