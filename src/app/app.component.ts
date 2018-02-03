@@ -25,7 +25,7 @@ export class AppComponent {
   journeys = null;
   filteredOptions: Observable<string[]>;
   myControl: FormControl = new FormControl();
-
+  panelOpenState: boolean = false;
 
   constructor(private http: HttpClient) {}
 

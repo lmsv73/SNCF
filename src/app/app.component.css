@@ -19,3 +19,7 @@ mat-form-field {
 mat-list-item {
   padding-bottom: 10px;
 }
+
+.journeys {
+  width: 400px;
+}
