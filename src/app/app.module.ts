@@ -6,11 +6,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import {StationService} from './station.service';
+import {StationComponent} from './station/station.component';
+import {JourneyComponent} from './journey/journey.component';
+import {MessageService} from './message.service';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    StationComponent,
+    JourneyComponent
   ],
   imports: [
     BrowserModule,
@@ -20,7 +24,7 @@ import {StationService} from './station.service';
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [MessageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

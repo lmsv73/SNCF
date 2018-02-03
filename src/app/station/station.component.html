@@ -1,0 +1,35 @@
+<div class="main-form">
+  <div class="form">
+    <form class="example-form">
+      <mat-form-field class="example-full-width">
+        <input [(ngModel)]="depart" name="depart" type="text" placeholder="Gare départ" matInput [matAutocomplete]="auto" (ngModelChange)="searchStations(depart)" (focusout)="checkStation('D')">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let option of filteredOptions | async" [value]="option['name']">
+            {{ option['name'] }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </form>
+
+    <form class="example-form">
+      <mat-form-field class="example-full-width">
+        <input [(ngModel)]="arrivee" name="arrivee" type="text" placeholder="Gare arrivée" matInput [matAutocomplete]="auto" (ngModelChange)="searchStations(arrivee)" (focusout)="checkStation('A')">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let option of filteredOptions | async" [value]="option['name']">
+            {{ option['name'] }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </form>
+
+    <mat-form-field>
+      <input [min]="minDate" [(ngModel)]="dateDepart" name="dateDepart" matInput [matDatepicker]="picker" placeholder="Départ">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <div class="search-button">
+    <button (click)="searchJourneys()" mat-raised-button color="primary" [disabled]="!isValidForm()">Rechercher</button>
+  </div>
+</div>

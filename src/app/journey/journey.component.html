@@ -1,0 +1,27 @@
+<div class="journeys">
+  <div *ngFor="let journey of journeys">
+    <div>
+      <mat-accordion>
+        <mat-expansion-panel>
+
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ journey.departure_date_time | date:'HH:mm'  }} - {{ journey.arrival_date_time | date:'HH:mm'  }}
+            </mat-panel-title>
+
+            <mat-panel-description>
+              <div>Durée : {{ secondToDate(journey.duration) }}</div>
+              <div>{{ journey.nb_transfers == 0 ? "Direct" : journey.nb_transfers + " change." }}</div>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div *ngFor="let section of journey.sections"  class="sections">
+            <p>{{ section.departure_date_time | date:'HH:mm' }}</p>
+
+            <p>{{ section.arrival_date_time | date:'HH:mm' }}</p>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </div>
+</div>
