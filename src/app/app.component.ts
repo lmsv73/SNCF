@@ -1,14 +1,9 @@
-import {Component, ViewEncapsulation, OnInit} from '@angular/core';
+import {Component, ViewEncapsulation} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {map} from 'rxjs/operators/map';
 import {Observable} from 'rxjs/Observable';
 import {FormControl} from '@angular/forms';
 import {startWith} from 'rxjs/operators/startWith';
-
-class Villes {
-  depart: Array<string>;
-  arrivee: Array<string>;
-}
 
 @Component({
   selector: 'app-root',
@@ -17,10 +12,14 @@ class Villes {
   encapsulation: ViewEncapsulation.None
 })
 
-export class AppComponent implements OnInit {
+export class AppComponent {
   depart = null;
   arrivee = null;
-  villes = new Villes;
+  villes = null;
+  oDepart = null;
+  oArrivee = null;
+  isDepartValide = false;
+  isArriveeValide = false;
   filteredOptions: Observable<string[]>;
   myControl: FormControl = new FormControl();
 
@@ -33,37 +32,53 @@ export class AppComponent implements OnInit {
       .append('Authorization', 'e382ad1c-a036-441f-8dea-eab80d0e136b')
   };
 
-  ngOnInit() {
-    this.villes.depart = [];
-    this.villes.arrivee = [];
-  }
-
-  getCities(val: string, start: string) {
+  getCities(val: string) {
     if(val != "") {
       this.http
         .get("https://api.sncf.com/v1/coverage/sncf/places?q=" + val, this._options)
         .subscribe(res => {
-          start == 'a' ? this.villes.arrivee = res["places"] : this.villes.depart = res["places"];
+          this.villes = res["places"];
 
-          this.filteredOptions = this.myControl.valueChanges
-            .pipe(
-              startWith(''),
-              map(val => this.filter(val, start))
-            );
+          if(typeof this.villes !== "undefined") {
+            this.filteredOptions = this.myControl.valueChanges
+              .pipe(
+                startWith(''),
+                map(val => this.filter(val))
+              );
+          }
         });
     } else {
-      start == 'a' ? this.villes.arrivee = [] : this.villes.depart = [];
+      this.villes = [];
     }
   }
 
-  filter(val: string, start: string): string[] {
-    if(start == 'a')
-      return this.villes.arrivee.filter(option => option['name'].toLowerCase().indexOf(val.toLowerCase()) === 0);
-    else
-      return this.villes.depart.filter(option => option['name'].toLowerCase().indexOf(val.toLowerCase()) === 0);
+  filter(val: string): string[] {
+    return this.villes.filter(
+      option => option['name'].toLowerCase().indexOf(val.toLowerCase()) === 0
+    );
   }
 
   getDatas() {
-    console.log(this.depart);
+    console.log(this.oDepart);
+  }
+
+  checkStation(start: string) {
+    let from = start == 'D' ? this.depart : this.arrivee;
+    start == 'D' ? this.isDepartValide = false : this.isArriveeValide = false;
+
+    if(from != "") {
+      this.http
+        .get("https://api.sncf.com/v1/coverage/sncf/places?q=" + from, this._options)
+        .subscribe(res => {
+
+          res["places"].forEach(element => {
+            if(element["name"] == from) {
+              console.log(element);
+              start == 'D' ? this.oDepart = element : this.oArrivee = element;
+              start == 'D' ? this.isDepartValide = true : this.isArriveeValide = true;
+            }
+          })
+        });
+    }
   }
 }
