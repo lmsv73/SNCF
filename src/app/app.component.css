@@ -1,1 +1,21 @@
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+.journeys div {
+  padding: 10px 5px;
+}
+
+mat-form-field {
+  width: 400px;
+}
+
+.main-form {
+  width: 400px;
+}
+
+.search-button {
+  text-align: center;
+}
+
+mat-list-item {
+  padding-bottom: 10px;
+}

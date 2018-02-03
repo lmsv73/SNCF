@@ -1,30 +1,59 @@
 
-<form class="example-form">
-  <mat-form-field class="example-full-width">
-    <input [(ngModel)]="depart" name="depart" type="text" placeholder="Gare départ" matInput [matAutocomplete]="auto" (ngModelChange)="getCities(depart)" (focusout)="checkStation('D')">
-    <mat-autocomplete #auto="matAutocomplete">
-      <mat-option *ngFor="let option of filteredOptions | async" [value]="option['name']">
-        {{ option['name'] }}
-      </mat-option>
-    </mat-autocomplete>
-  </mat-form-field>
-</form>
+<div class="main-form">
+  <div class="form">
+    <form class="example-form">
+      <mat-form-field class="example-full-width">
+        <input [(ngModel)]="depart" name="depart" type="text" placeholder="Gare départ" matInput [matAutocomplete]="auto" (ngModelChange)="searchStations(depart)" (focusout)="checkStation('D')">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let option of filteredOptions | async" [value]="option['name']">
+            {{ option['name'] }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </form>
 
-<form class="example-form">
-  <mat-form-field class="example-full-width">
-    <input [(ngModel)]="arrivee" name="arrivee" type="text" placeholder="Gare arrivée" matInput [matAutocomplete]="auto" (ngModelChange)="getCities(arrivee)" (focusout)="checkStation('A')">
-    <mat-autocomplete #auto="matAutocomplete">
-      <mat-option *ngFor="let option of filteredOptions | async" [value]="option['name']">
-        {{ option['name'] }}
-      </mat-option>
-    </mat-autocomplete>
-  </mat-form-field>
-</form>
+    <form class="example-form">
+      <mat-form-field class="example-full-width">
+        <input [(ngModel)]="arrivee" name="arrivee" type="text" placeholder="Gare arrivée" matInput [matAutocomplete]="auto" (ngModelChange)="searchStations(arrivee)" (focusout)="checkStation('A')">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let option of filteredOptions | async" [value]="option['name']">
+            {{ option['name'] }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </form>
 
-<mat-form-field>
-  <input matInput [matDatepicker]="picker" placeholder="Départ">
-  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-  <mat-datepicker #picker></mat-datepicker>
-</mat-form-field>
+    <mat-form-field>
+      <input [min]="minDate" [(ngModel)]="dateDepart" name="dateDepart" matInput [matDatepicker]="picker" placeholder="Départ">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
 
-<button (click)="getDatas()" mat-raised-button color="primary" [disabled]="!isValidForm()">Rechercher</button>
+  <div class="search-button">
+    <button (click)="searchJourneys()" mat-raised-button color="primary" [disabled]="!isValidForm()">Rechercher</button>
+  </div>
+</div>
+
+
+
+
+<div class="journeys">
+  <mat-list>
+    <div *ngFor="let journey of journeys">
+      <mat-list-item>
+        <div>
+          <p>{{ journey.departure_date_time | date:'HH:mm'  }}</p>
+          <p>{{ journey.arrival_date_time | date:'HH:mm'  }}</p>
+        </div>
+        <div>
+          <p>Durée : {{ secondToDate(journey.duration) }}</p>
+        </div>
+        <div>
+          <p>{{ journey.nb_transfers == 0 ? "Direct" : journey.nb_transfers + " change." }}</p>
+        </div>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+    </div>
+  </mat-list>
+</div>
