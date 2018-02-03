@@ -67,19 +67,22 @@ export class AppComponent {
     let from = start == 'D' ? this.depart : this.arrivee;
     start == 'D' ? this.isDepartValide = false : this.isArriveeValide = false;
 
-    if(from != "") {
+    if(from != "" && from != null) {
       this.http
         .get("https://api.sncf.com/v1/coverage/sncf/places?q=" + from, this._options)
         .subscribe(res => {
 
           res["places"].forEach(element => {
             if(element["name"] == from) {
-              console.log(element);
               start == 'D' ? this.oDepart = element : this.oArrivee = element;
               start == 'D' ? this.isDepartValide = true : this.isArriveeValide = true;
             }
           })
         });
     }
+  }
+
+  isValidForm() {
+    return this.isArriveeValide && this.isDepartValide;
   }
 }
