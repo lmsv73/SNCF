@@ -7,7 +7,8 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
   templateUrl: './journey.component.html',
   styleUrls: ['./journey.component.css']
 })
-export class JourneyComponent {
+
+export class JourneyComponent  {
   journeys = null;
   oDepart = null;
   oArrivee = null;
@@ -40,7 +41,7 @@ export class JourneyComponent {
       .get("https://api.sncf.com/v1/coverage/sncf/journeys?from="+ lonA + ";" + latA + "&to=" + lonB + ";" + latB + "&datetime=" + date, this._options)
       .subscribe(res => {
         this.journeys = res['journeys'];
-        console.log(this.journeys);
+
       });
   }
 

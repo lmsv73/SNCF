@@ -9,12 +9,14 @@ import { AppComponent } from './app.component';
 import {StationComponent} from './station/station.component';
 import {JourneyComponent} from './journey/journey.component';
 import {MessageService} from './message.service';
+import {FilterTypePipe} from './filter-type.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     StationComponent,
-    JourneyComponent
+    JourneyComponent,
+    FilterTypePipe
   ],
   imports: [
     BrowserModule,

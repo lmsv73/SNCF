@@ -15,7 +15,7 @@
             </mat-panel-description>
           </mat-expansion-panel-header>
 
-          <div *ngFor="let section of journey.sections"  class="sections">
+          <div *ngFor="let section of journey.sections | filterType: 'type' : 'waiting'"  class="sections">
             <p>{{ section.departure_date_time | date:'HH:mm' }}</p>
 
             <p>{{ section.arrival_date_time | date:'HH:mm' }}</p>
