@@ -38,25 +38,27 @@
 <div class="journeys">
     <div *ngFor="let journey of journeys">
       <div>
-        <div>
-          <mat-expansion-panel >
+        <mat-accordion>
+          <mat-expansion-panel>
+
             <mat-expansion-panel-header>
               <mat-panel-title>
-                <div>
-                  <p>{{ journey.departure_date_time | date:'HH:mm'  }} - {{ journey.arrival_date_time | date:'HH:mm'  }}</p>
-                </div>
+                {{ journey.departure_date_time | date:'HH:mm'  }} - {{ journey.arrival_date_time | date:'HH:mm'  }}
               </mat-panel-title>
+
               <mat-panel-description>
-                <div><p>Durée : {{ secondToDate(journey.duration) }}</p></div>
-                <div><p>{{ journey.nb_transfers == 0 ? "Direct" : journey.nb_transfers + " change." }}</p></div>
+                <div>Durée : {{ secondToDate(journey.duration) }}</div>
+                <div>{{ journey.nb_transfers == 0 ? "Direct" : journey.nb_transfers + " change." }}</div>
               </mat-panel-description>
             </mat-expansion-panel-header>
+
+            <div *ngFor="let section of journey.sections"  class="sections">
+              <p>{{ section.departure_date_time | date:'HH:mm' }}</p>
+
+              <p>{{ section.arrival_date_time | date:'HH:mm' }}</p>
+            </div>
           </mat-expansion-panel>
-          <mat-expansion-panel (opened)="panelOpenState = true"
-                               (closed)="panelOpenState = false">
-            <p>Ok</p>
-          </mat-expansion-panel>
-        </div>
+        </mat-accordion>
       </div>
     </div>
 </div>

@@ -1,9 +1,5 @@
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
-.journeys div {
-  padding: 10px 5px;
-}
-
 mat-form-field {
   width: 400px;
 }
@@ -16,10 +12,14 @@ mat-form-field {
   text-align: center;
 }
 
-mat-list-item {
-  padding-bottom: 10px;
-}
-
 .journeys {
   width: 400px;
+}
+
+mat-panel-description div {
+  padding-right: 20px;
+}
+
+.sections {
+  margin-bottom: 15px;
 }
