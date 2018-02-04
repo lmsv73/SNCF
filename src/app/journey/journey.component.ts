@@ -50,9 +50,7 @@ export class JourneyComponent  {
         this.journeys = res['journeys'];
         this.calculDistanceTotal();
 
-
         Promise.all(this.promises).then(val => {
-          console.log(val);
           let index = 0;
           let savePoint = 0;
 
