@@ -10,7 +10,7 @@ export class FilterTypePipe implements PipeTransform {
     if (!value || value.length == 0) return items;
 
     return items.filter(it =>
-      it[field].toLowerCase().indexOf(value.toLowerCase()) !== 0);
+      it[field].toLowerCase().indexOf(value.toLowerCase()) === 0);
   }
 
 }

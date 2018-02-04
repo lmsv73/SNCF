@@ -15,10 +15,15 @@
             </mat-panel-description>
           </mat-expansion-panel-header>
 
-          <div *ngFor="let section of journey.sections | filterType: 'type' : 'waiting'"  class="sections">
-            <p>{{ section.departure_date_time | date:'HH:mm' }}</p>
+          <div *ngFor="let section of journey.sections | filterType: 'type' : 'public_transport'; let i = index" [attr.data-index]="i"  class="sections">
+            <div class="correspondance" *ngIf="i >= 1 && compareDate(journey.sections | filterType: 'type' : 'public_transport', i, i - 1)">
+              <img class="down-arrow" src="../../assets/images/dot-down-arrow.png">
+              <p>Correspondance : {{ timeDiff }}</p>
+            </div>
 
-            <p>{{ section.arrival_date_time | date:'HH:mm' }}</p>
+            <p>{{ section.departure_date_time | date:'HH:mm' }} - {{ section.from.name }}</p>
+            <img class="down-arrow" src="../../assets/images/down-arrow.png">
+            <p>{{ section.arrival_date_time | date:'HH:mm' }} - {{ section.to.name }}</p>
           </div>
         </mat-expansion-panel>
       </mat-accordion>

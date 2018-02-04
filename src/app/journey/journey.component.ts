@@ -13,6 +13,8 @@ export class JourneyComponent  {
   oDepart = null;
   oArrivee = null;
   dateDepart = null;
+  sections = null;
+  timeDiff = null;
 
   private _options = {
     headers: new HttpHeaders()
@@ -53,5 +55,27 @@ export class JourneyComponent  {
     let mDisplay = h > 0 ? ( m > 0 ? (m < 10 ? "0" + m : m) : "") : m + ("min");
 
     return hDisplay + mDisplay;
+  }
+
+  compareDate(sections: object, departureIndex: number, arrivalIndex: number) {
+    this.sections = sections;
+    let departTime = this.parseDate(this.sections[departureIndex].departure_date_time);
+    let arriveeTime = this.parseDate(this.sections[arrivalIndex].arrival_date_time);
+
+    this.timeDiff = this.secondToDate(departTime.getTime() / 1000 - arriveeTime.getTime() / 1000);
+
+    return departTime !== arriveeTime;
+  }
+
+   parseDate(date: string) {
+    let y = parseInt(date.substr(0,4)),
+      m = parseInt(date.substr(4,2)),
+      d = parseInt(date.substr(6,2)),
+      h = parseInt(date.substr(9,2)),
+      min = parseInt(date.substr(11,2)),
+      s = parseInt(date.substr(13,2))
+    ;
+
+    return new Date(y , m, d, h, min, s);
   }
 }
