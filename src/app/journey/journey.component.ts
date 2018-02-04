@@ -65,7 +65,7 @@ export class JourneyComponent  {
             elem["dist"] = Math.round((val[index - 1] - savePoint) / 1000);
             savePoint = val[index - 1];
           });
-          this.promises = [];
+          this.promises = []
         });
       });
   }
