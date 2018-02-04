@@ -2,7 +2,7 @@
   <div class="form">
     <form class="example-form">
       <mat-form-field class="example-full-width">
-        <input [(ngModel)]="depart" name="depart" type="text" placeholder="Gare départ" matInput [matAutocomplete]="auto" (ngModelChange)="searchStations(depart)" (focusout)="checkStation('D')">
+        <input [(ngModel)]="depart" name="depart" type="text" placeholder="Gare départ" matInput [matAutocomplete]="auto" (ngModelChange)="onDepartChange($event)" (focusout)="checkStation('D')">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let option of filteredOptions | async" [value]="option['name']">
             {{ option['name'] }}
@@ -13,7 +13,7 @@
 
     <form class="example-form">
       <mat-form-field class="example-full-width">
-        <input [(ngModel)]="arrivee" name="arrivee" type="text" placeholder="Gare arrivée" matInput [matAutocomplete]="auto" (ngModelChange)="searchStations(arrivee)" (focusout)="checkStation('A')">
+        <input [(ngModel)]="arrivee" name="arrivee" type="text" placeholder="Gare arrivée" matInput [matAutocomplete]="auto" (ngModelChange)="onArrivalChange($event)" (focusout)="checkStation('A')">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let option of filteredOptions | async" [value]="option['name']">
             {{ option['name'] }}

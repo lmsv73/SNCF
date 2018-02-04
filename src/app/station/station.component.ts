@@ -5,6 +5,8 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {FormControl} from '@angular/forms';
 import {MessageService} from '../message.service';
+import {Subject} from 'rxjs/Subject';
+import "rxjs/Rx";
 
 @Component({
   selector: 'app-station',
@@ -23,11 +25,28 @@ export class StationComponent  {
   isArriveeValide = false;
   oDepart = null;
   oArrivee = null;
+  departureChanged: Subject<string> = new Subject<string>();
+  arrivalChanged: Subject<string> = new Subject<string>();
 
   constructor(
     private http: HttpClient,
-    private _messageService: MessageService
-  ) {}
+    private _messageService: MessageService) {
+      this.departureChanged
+        .debounceTime(1000)
+        .distinctUntilChanged()
+        .subscribe(model => {
+          this.depart = model;
+          this.searchStations(this.depart);
+        });
+
+    this.arrivalChanged
+      .debounceTime(1000)
+      .distinctUntilChanged()
+      .subscribe(model => {
+        this.arrivee = model;
+        this.searchStations(this.arrivee);
+      });
+  }
 
   private _options = {
     headers: new HttpHeaders()
@@ -91,5 +110,13 @@ export class StationComponent  {
 
   isValidForm() {
     return this.isArriveeValide && this.isDepartValide;
+  }
+
+  onDepartChange(query:string){
+    this.departureChanged.next(query);
+  }
+
+  onArrivalChange(query:string){
+    this.arrivalChanged.next(query);
   }
 }
