@@ -39,13 +39,13 @@ export class StationComponent  {
           this.searchStations(this.depart);
         });
 
-    this.arrivalChanged
-      .debounceTime(1000)
-      .distinctUntilChanged()
-      .subscribe(model => {
-        this.arrivee = model;
-        this.searchStations(this.arrivee);
-      });
+      this.arrivalChanged
+        .debounceTime(1000)
+        .distinctUntilChanged()
+        .subscribe(model => {
+          this.arrivee = model;
+          this.searchStations(this.arrivee);
+        });
   }
 
   private _options = {

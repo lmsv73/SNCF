@@ -36,16 +36,14 @@ export class JourneyComponent  {
   }
 
   searchJourneys() {
-    let lonA = this.oDepart.stop_area.coord.lon;
-    let latA = this.oDepart.stop_area.coord.lat;
-    let lonB = this.oArrivee.stop_area.coord.lon;
-    let latB = this.oArrivee.stop_area.coord.lat;
-    let date = this.dateDepart.toISOString();
+
+    let time = new Date(this.dateDepart);
+    let date = time.getFullYear() + '' + ("0" + (time.getMonth() + 1)).slice(-2) + '' + ("0" + (time.getDate())).slice(-2);
 
     this.distance = 0;
 
     this.http
-      .get("https://api.sncf.com/v1/coverage/sncf/journeys?from="+ lonA + ";" + latA + "&to=" + lonB + ";" + latB + "&datetime=" + date, this._options)
+      .get("https://api.sncf.com/v1/coverage/sncf/journeys?from="+ this.oDepart.id + "&to=" + this.oArrivee.id  + "&datetime=" + date, this._options)
       .subscribe(res => {
         this.journeys = res['journeys'];
         this.calculDistanceTotal();
@@ -140,21 +138,10 @@ export class JourneyComponent  {
         let from = section.from;
         let to = section.to;
         if(section.type != "waiting") {
-          if(from.embedded_type == "address") {
-            latA = from.address.coord.lat;
-            lonA = from.address.coord.lon;
-          } else if(from.embedded_type == "stop_point"){
-            latA = from.stop_point.coord.lat;
-            lonA = from.stop_point.coord.lon;
-          }
-
-          if(to.embedded_type == "address") {
-            latB = to.address.coord.lat;
-            lonB = to.address.coord.lon;
-          } else if(to.embedded_type == "stop_point"){
-            latB = to.stop_point.coord.lat;
-            lonB = to.stop_point.coord.lon;
-          }
+          latA = from[from.embedded_type].coord.lat;
+          lonA = from[from.embedded_type].coord.lon;
+          latB = to[to.embedded_type].coord.lat;
+          lonB = to[to.embedded_type].coord.lon;
 
           this.getDistance(lonA, latA, lonB, latB);
         }
