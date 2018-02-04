@@ -12,13 +12,15 @@
             <mat-panel-description>
               <div>Durée : {{ secondToDate(journey.duration) }}</div>
               <div>{{ journey.nb_transfers == 0 ? "Direct" : journey.nb_transfers + " change." }}</div>
+              <div>{{ journey.dist }} km</div>
             </mat-panel-description>
           </mat-expansion-panel-header>
 
           <div *ngFor="let section of journey.sections | filterType: 'type' : 'public_transport'; let i = index" [attr.data-index]="i"  class="sections">
             <div class="correspondance" *ngIf="i >= 1 && compareDate(journey.sections | filterType: 'type' : 'public_transport', i, i - 1)">
               <img class="down-arrow" src="../../assets/images/dot-down-arrow.png">
-              <p>Correspondance : {{ timeDiff }}</p>
+              <img class="down-arrow" src="../../assets/images/clock-time.png">
+              <p>{{ timeDiff }}</p>
             </div>
 
             <p>{{ section.departure_date_time | date:'HH:mm' }} - {{ section.from.name }}</p>
