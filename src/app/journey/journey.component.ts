@@ -17,6 +17,7 @@ export class JourneyComponent  {
   sections = null;
   timeDiff = null;
   distance = 0;
+  price = 0;
   promises = [];
 
   private _options = {
@@ -51,17 +52,26 @@ export class JourneyComponent  {
         Promise.all(this.promises).then(val => {
           let index = 0;
           let savePoint = 0;
-
+          console.log(val);
           this.journeys.forEach(elem => {
             let sections = elem.sections;
             for(let i = 0; i < sections.length; i++) {
               if(sections[i].type != "waiting") {
                 index++;
               }
+
+              if(sections[i].type == "public_transport") {
+                console.log(index);
+                this.price += (val[index - 1] - val[index - 2]) / 1000;
+              }
             }
 
             elem["dist"] = Math.round((val[index - 1] - savePoint) / 1000);
+            elem["prix_1"] = (this.price * 0.21).toFixed(2);
+            elem["prix_2"] = (this.price * 0.18).toFixed(2);
+            console.log(elem);
             savePoint = val[index - 1];
+            this.price = 0;
           });
           this.promises = []
         });
