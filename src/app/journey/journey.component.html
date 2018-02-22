@@ -1,4 +1,16 @@
-<div class="journeys">
+<div *ngIf="journeys != null" class="journeys">
+
+  <div class="convert">
+    <mat-form-field>
+      <mat-select [(ngModel)]="selectedCurrency" placeholder="Currency">
+        <mat-option *ngFor="let currency of currenciesList[0]" [value]="currency.elements[0].text">
+          {{ currency.elements[0].text }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button (click)="convertCurrency()" mat-raised-button color="primary" [disabled]="selectedCurrency == null">Convertir</button>
+  </div>
+
   <div *ngFor="let journey of journeys">
     <div>
       <mat-accordion>
@@ -13,8 +25,10 @@
               <div>Durée : {{ secondToDate(journey.duration) }}</div>
               <div>{{ journey.nb_transfers == 0 ? "Direct" : journey.nb_transfers + " change." }}</div>
               <div>{{ journey.dist }} km</div>
+              <div>{{ journey.prix | number: '1.2-2'}} {{ currency }}</div>
             </mat-panel-description>
           </mat-expansion-panel-header>
+
 
           <div *ngFor="let section of journey.sections | filterType: 'type' : 'public_transport'; let i = index" [attr.data-index]="i"  class="sections">
             <div class="correspondance" *ngIf="i >= 1 && compareDate(journey.sections | filterType: 'type' : 'public_transport', i, i - 1)">

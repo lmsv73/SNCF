@@ -19,6 +19,9 @@ export class JourneyComponent  {
   distance = 0;
   price = 0;
   promises = [];
+  currency = 'EUR';
+  currenciesList = [];
+  selectedCurrency = null;
 
   private _options = {
     headers: new HttpHeaders()
@@ -32,6 +35,8 @@ export class JourneyComponent  {
       this.oDepart = m[0];
       this.oArrivee = m[1];
       this.dateDepart = m[2];
+
+      this.getCurrencies();
       this.searchJourneys();
     })
   }
@@ -52,7 +57,7 @@ export class JourneyComponent  {
         Promise.all(this.promises).then(val => {
           let index = 0;
           let savePoint = 0;
-          console.log(val);
+
           this.journeys.forEach(elem => {
             let sections = elem.sections;
             for(let i = 0; i < sections.length; i++) {
@@ -61,15 +66,13 @@ export class JourneyComponent  {
               }
 
               if(sections[i].type == "public_transport") {
-                console.log(index);
                 this.price += (val[index - 1] - val[index - 2]) / 1000;
               }
             }
 
             elem["dist"] = Math.round((val[index - 1] - savePoint) / 1000);
-            elem["prix_1"] = (this.price * 0.21).toFixed(2);
-            elem["prix_2"] = (this.price * 0.18).toFixed(2);
-            console.log(elem);
+            elem["prix"] = (this.price * 0.21).toFixed(2);
+
             savePoint = val[index - 1];
             this.price = 0;
           });
@@ -157,5 +160,65 @@ export class JourneyComponent  {
         }
       });
     });
+  }
+
+  getCurrencies() {
+    let sr =
+      `<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
+          <soap12:Body>
+            <GetCurrencies xmlns="http://tempuri.org/" />
+          </soap12:Body>
+       </soap12:Envelope>`;
+
+      this.http
+        .post("http://currencyconverter.kowabunga.net/converter.asmx", sr,
+          {headers: new HttpHeaders().set('Content-Type', 'text/xml'), responseType: 'text'})
+        .subscribe(res => {
+          let json = xml2json(res);
+          let parse = JSON.parse(json).elements[0].elements[0].elements[0].elements[0].elements;
+          this.currenciesList.push(parse);
+
+        });
+  }
+
+
+  convertCurrency() {
+    let sr =
+      `<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
+        <soap12:Body>
+          <GetConversionRate xmlns="http://tempuri.org/">
+            <CurrencyFrom>` + this.currency + `</CurrencyFrom>
+            <CurrencyTo>` + this.selectedCurrency + `</CurrencyTo>
+            <RateDate>` + this.formatDate() + `</RateDate>
+          </GetConversionRate>
+        </soap12:Body>
+      </soap12:Envelope>`;
+
+    this.http
+      .post("http://currencyconverter.kowabunga.net/converter.asmx", sr,
+        {headers: new HttpHeaders().set('Content-Type', 'text/xml'), responseType: 'text'})
+      .subscribe(res => {
+        let json = xml2json(res);
+        let rate = JSON.parse(json).elements[0].elements[0].elements[0].elements[0].elements[0].text;
+
+        this.journeys.forEach(elem => {
+          elem.prix *= rate;
+        });
+
+        this.currency = this.selectedCurrency;
+
+      });
+  }
+
+  formatDate() {
+    let d = new Date(),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
   }
 }

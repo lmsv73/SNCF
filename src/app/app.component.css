@@ -1,11 +1,11 @@
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
 mat-form-field {
-  width: 500px;
+  width: 600px;
 }
 
 .main-form {
-  width: 500px;
+  width: 600px;
 }
 
 .search-button {
@@ -13,7 +13,7 @@ mat-form-field {
 }
 
 .journeys {
-  width: 500px;
+  width: 600px;
 }
 
 mat-panel-description div {
@@ -22,4 +22,12 @@ mat-panel-description div {
 
 .sections {
   margin-bottom: 15px;
+}
+
+.mat-button {
+  line-height: normal !important;
+}
+
+.convert .mat-form-field {
+  width: 200px;
 }
