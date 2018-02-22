@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {MessageService} from '../message.service';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {xml2json} from 'xml-js';
+import {FetchDataService} from '../fetch-data.service';
 
 @Component({
   selector: 'app-journey',
@@ -23,14 +23,7 @@ export class JourneyComponent  {
   currenciesList = [];
   selectedCurrency = null;
 
-  private _options = {
-    headers: new HttpHeaders()
-      .append('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
-      .append('Accept', 'application/json')
-      .append('Authorization', 'e382ad1c-a036-441f-8dea-eab80d0e136b')
-  };
-
-  constructor(private _messageService: MessageService, private http: HttpClient){
+  constructor(private _messageService: MessageService, private _fetchDataService: FetchDataService){
     this._messageService.listen().subscribe((m:any) => {
       this.oDepart = m[0];
       this.oArrivee = m[1];
@@ -42,14 +35,12 @@ export class JourneyComponent  {
   }
 
   searchJourneys() {
-
     let time = new Date(this.dateDepart);
     let date = time.getFullYear() + '' + ("0" + (time.getMonth() + 1)).slice(-2) + '' + ("0" + (time.getDate())).slice(-2);
 
     this.distance = 0;
 
-    this.http
-      .get("https://api.sncf.com/v1/coverage/sncf/journeys?from="+ this.oDepart.id + "&to=" + this.oArrivee.id  + "&datetime=" + date, this._options)
+    this._fetchDataService.getJourneys(this.oDepart.id, this.oArrivee.id, date)
       .subscribe(res => {
         this.journeys = res['journeys'];
         this.calculDistanceTotal();
@@ -114,23 +105,9 @@ export class JourneyComponent  {
   }
 
   getDistance(lonA: number, latA: number, lonB: number, latB: number) {
-    let sr =
-      `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:exam="http://example/">
-          <soapenv:Header/>
-          <soapenv:Body>
-             <exam:calculDistance> 
-                <arg0>`+ latA +`</arg0>
-                <arg1>`+ lonA +`</arg1>
-                <arg2>`+ latB +`</arg2>
-                <arg3>`+ lonB +`</arg3>
-             </exam:calculDistance>
-          </soapenv:Body>
-       </soapenv:Envelope>`;
 
     let promise = new Promise((resolve) => {
-      this.http
-        .post("http://localhost:8080/SOAP_distance_war_exploded/services/CalculDistance?wsdl", sr,
-          {headers: new HttpHeaders().set('Content-Type', 'text/xml'), responseType: 'text'})
+     this._fetchDataService.getDistance(lonA, latA, lonB, latB)
         .subscribe(res => {
           let json = xml2json(res);
           let parse = JSON.parse(json).elements[0].elements[0].elements[0].elements[0].elements[0].text;
@@ -163,40 +140,16 @@ export class JourneyComponent  {
   }
 
   getCurrencies() {
-    let sr =
-      `<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
-          <soap12:Body>
-            <GetCurrencies xmlns="http://tempuri.org/" />
-          </soap12:Body>
-       </soap12:Envelope>`;
-
-      this.http
-        .post("http://currencyconverter.kowabunga.net/converter.asmx", sr,
-          {headers: new HttpHeaders().set('Content-Type', 'text/xml'), responseType: 'text'})
+     this._fetchDataService.getCurrencies()
         .subscribe(res => {
           let json = xml2json(res);
           let parse = JSON.parse(json).elements[0].elements[0].elements[0].elements[0].elements;
           this.currenciesList.push(parse);
-
         });
   }
 
-
   convertCurrency() {
-    let sr =
-      `<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
-        <soap12:Body>
-          <GetConversionRate xmlns="http://tempuri.org/">
-            <CurrencyFrom>` + this.currency + `</CurrencyFrom>
-            <CurrencyTo>` + this.selectedCurrency + `</CurrencyTo>
-            <RateDate>` + this.formatDate() + `</RateDate>
-          </GetConversionRate>
-        </soap12:Body>
-      </soap12:Envelope>`;
-
-    this.http
-      .post("http://currencyconverter.kowabunga.net/converter.asmx", sr,
-        {headers: new HttpHeaders().set('Content-Type', 'text/xml'), responseType: 'text'})
+    this._fetchDataService.getCurrencyRate(this.currency, this.selectedCurrency, this.formatDate())
       .subscribe(res => {
         let json = xml2json(res);
         let rate = JSON.parse(json).elements[0].elements[0].elements[0].elements[0].elements[0].text;
@@ -206,7 +159,6 @@ export class JourneyComponent  {
         });
 
         this.currency = this.selectedCurrency;
-
       });
   }
 

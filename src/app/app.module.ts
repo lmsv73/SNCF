@@ -10,6 +10,7 @@ import {StationComponent} from './station/station.component';
 import {JourneyComponent} from './journey/journey.component';
 import {MessageService} from './message.service';
 import {FilterTypePipe} from './filter-type.pipe';
+import {FetchDataService} from './fetch-data.service';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,10 @@ import {FilterTypePipe} from './filter-type.pipe';
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [MessageService],
+  providers: [
+    MessageService,
+    FetchDataService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

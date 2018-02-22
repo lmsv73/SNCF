@@ -1,12 +1,12 @@
 import {Component} from '@angular/core';
 import {startWith} from 'rxjs/operators/startWith';
 import {map} from 'rxjs/operators/map';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {FormControl} from '@angular/forms';
 import {MessageService} from '../message.service';
 import {Subject} from 'rxjs/Subject';
 import "rxjs/Rx";
+import {FetchDataService} from '../fetch-data.service';
 
 @Component({
   selector: 'app-station',
@@ -29,7 +29,7 @@ export class StationComponent  {
   arrivalChanged: Subject<string> = new Subject<string>();
 
   constructor(
-    private http: HttpClient,
+    private _fetchDataService: FetchDataService,
     private _messageService: MessageService) {
       this.departureChanged
         .debounceTime(1000)
@@ -48,17 +48,9 @@ export class StationComponent  {
         });
   }
 
-  private _options = {
-    headers: new HttpHeaders()
-      .append('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
-      .append('Accept', 'application/json')
-      .append('Authorization', 'e382ad1c-a036-441f-8dea-eab80d0e136b')
-  };
-
   searchStations(val: string) {
     if(val != "") {
-      this.http
-        .get("https://api.sncf.com/v1/coverage/sncf/places?q=" + val + "&type[]=stop_area", this._options)
+      this._fetchDataService.getStations(val)
         .subscribe(res => {
           this.villes = res['places'];
 
@@ -80,8 +72,7 @@ export class StationComponent  {
     start == 'D' ? this.isDepartValide = false : this.isArriveeValide = false;
 
     if(from != "" && from != null) {
-      this.http
-        .get("https://api.sncf.com/v1/coverage/sncf/places?q=" + from + "&type[]=stop_area", this._options)
+      this._fetchDataService.getStopAreas(from)
         .subscribe(res => {
 
           res["places"].forEach(element => {
@@ -106,7 +97,6 @@ export class StationComponent  {
       this.oArrivee,
       this.dateDepart);
   }
-
 
   isValidForm() {
     return this.isArriveeValide && this.isDepartValide;
