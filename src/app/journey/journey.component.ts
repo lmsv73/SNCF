@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
 import {MessageService} from '../message.service';
-import {xml2json} from 'xml-js';
 import {FetchDataService} from '../fetch-data.service';
 
 @Component({
@@ -92,7 +91,7 @@ export class JourneyComponent  {
     return departTime !== arriveeTime;
   }
 
-   parseDate(date: string) {
+  parseDate(date: string) {
     let y = parseInt(date.substr(0,4)),
       m = parseInt(date.substr(4,2)),
       d = parseInt(date.substr(6,2)),
@@ -105,13 +104,13 @@ export class JourneyComponent  {
   }
 
   getDistance(lonA: number, latA: number, lonB: number, latB: number) {
-
     let promise = new Promise((resolve) => {
-     this._fetchDataService.getDistance(lonA, latA, lonB, latB)
+      this._fetchDataService.getDistance(lonA, latA, lonB, latB)
         .subscribe(res => {
-          let json = xml2json(res);
-          let parse = JSON.parse(json).elements[0].elements[0].elements[0].elements[0].elements[0].text;
-          this.distance += parseInt(parse);
+          let parser = new DOMParser();
+          let xml = parser.parseFromString(res, 'text/xml');
+          let distance = xml.getElementsByTagName('return')[0].textContent;
+          this.distance += parseInt(distance);
 
           resolve(this.distance);
         });
@@ -140,22 +139,24 @@ export class JourneyComponent  {
   }
 
   getCurrencies() {
-     this._fetchDataService.getCurrencies()
-        .subscribe(res => {
-          let json = xml2json(res);
-          let parse = JSON.parse(json).elements[0].elements[0].elements[0].elements[0].elements;
-          this.currenciesList.push(parse);
-        });
+    this._fetchDataService.getCurrencies()
+      .subscribe(res => {
+        let parser = new DOMParser();
+        let xml = parser.parseFromString(res, 'text/xml');
+        let listCurrencies = xml.getElementsByTagName('GetCurrenciesResult')[0];
+        this.currenciesList.push(listCurrencies.getElementsByTagName('string'));
+      });
   }
 
   convertCurrency() {
     this._fetchDataService.getCurrencyRate(this.currency, this.selectedCurrency, this.formatDate())
       .subscribe(res => {
-        let json = xml2json(res);
-        let rate = JSON.parse(json).elements[0].elements[0].elements[0].elements[0].elements[0].text;
+        let parser = new DOMParser();
+        let xml = parser.parseFromString(res, 'text/xml');
+        let rate = xml.getElementsByTagName('GetConversionRateResult')[0].textContent;
 
         this.journeys.forEach(elem => {
-          elem.prix *= rate;
+          elem.prix *= parseInt(rate);
         });
 
         this.currency = this.selectedCurrency;

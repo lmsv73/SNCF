@@ -4,8 +4,8 @@
     <form>
       <mat-form-field>
         <mat-select name="selectedCurrency" [(ngModel)]="selectedCurrency" placeholder="Currency">
-          <mat-option *ngFor="let currency of currenciesList[0]" [value]="currency.elements[0].text">
-            {{ currency.elements[0].text }}
+          <mat-option *ngFor="let currency of currenciesList[0]" [value]="currency.textContent">
+            {{ currency.textContent }}
           </mat-option>
         </mat-select>
       </mat-form-field>
