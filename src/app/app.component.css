@@ -1,5 +1,9 @@
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
+* {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
 mat-form-field {
   width: 600px;
 }
@@ -30,4 +34,24 @@ mat-panel-description div {
 
 .convert .mat-form-field {
   width: 200px;
+}
+
+ul {
+  display: inline-flex;
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+.navbar li {
+  margin-right: 10px;
+  padding: 5px 10px;
+  background-color: #673ab7;
+  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+}
+
+.navbar li a {
+  color: white;
 }

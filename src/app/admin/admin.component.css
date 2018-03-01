@@ -1,0 +1,11 @@
+.down-arrow {
+  width: 50px;
+}
+
+.correspondance {
+  display: inline-block;
+}
+
+.correspondance p {
+  float: right;
+}

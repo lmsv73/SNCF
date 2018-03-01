@@ -15,12 +15,23 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import {environment} from '../environments/environment';
+import {Routes, RouterModule} from "@angular/router";
+import {SearchComponent} from './search/search.component';
+import {AdminComponent} from './admin/admin.component';
+
+const routes: Routes = [
+  { path: '', component: SearchComponent },
+  { path: 'search', component: AdminComponent },
+  {path: '**', component: SearchComponent}
+];
 
 @NgModule({
   declarations: [
     AppComponent,
     StationComponent,
     JourneyComponent,
+    SearchComponent,
+    AdminComponent,
     FilterTypePipe
   ],
   imports: [
@@ -32,7 +43,8 @@ import {environment} from '../environments/environment';
     HttpClientModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireDatabaseModule,
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    RouterModule.forRoot(routes, {useHash: true})
   ],
   providers: [
     MessageService,
