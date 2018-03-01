@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {MessageService} from '../message.service';
 import {FetchDataService} from '../fetch-data.service';
+import {AngularFireDatabase} from 'angularfire2/database';
 
 @Component({
   selector: 'app-journey',
@@ -23,7 +24,7 @@ export class JourneyComponent  {
   selectedCurrency = null;
   error = null;
 
-  constructor(private _messageService: MessageService, private _fetchDataService: FetchDataService){
+  constructor(private _messageService: MessageService, private _fetchDataService: FetchDataService, private fdb: AngularFireDatabase){
     this._messageService.listen().subscribe((m:any) => {
       this.oDepart = m[0];
       this.oArrivee = m[1];
@@ -62,8 +63,9 @@ export class JourneyComponent  {
               }
             }
 
-            elem["dist"] = Math.round((val[index - 1] - savePoint) / 1000);
-            elem["prix"] = (this.price * 0.21).toFixed(2);
+            elem.dist = Math.round((val[index - 1] - savePoint) / 1000);
+            elem.prix = (this.price * 0.21).toFixed(2);
+            elem.monnaie = this.currency;
 
             savePoint = val[index - 1];
             this.price = 0;
@@ -162,6 +164,7 @@ export class JourneyComponent  {
         if(parseFloat(rate) != 0) {
           this.journeys.forEach(elem => {
             elem.prix *= parseFloat(rate);
+            elem.monnaie = this.selectedCurrency;
           });
 
           this.currency = this.selectedCurrency;
@@ -181,5 +184,9 @@ export class JourneyComponent  {
     if (day.length < 2) day = '0' + day;
 
     return [year, month, day].join('-');
+  }
+
+  storeJourney(journey: any) {
+    this.fdb.list('journey').push(journey);
   }
 }
