@@ -21,6 +21,7 @@ export class JourneyComponent  {
   currency = 'EUR';
   currenciesList = [];
   selectedCurrency = null;
+  error = null;
 
   constructor(private _messageService: MessageService, private _fetchDataService: FetchDataService){
     this._messageService.listen().subscribe((m:any) => {
@@ -38,6 +39,7 @@ export class JourneyComponent  {
     let date = time.getFullYear() + '' + ("0" + (time.getMonth() + 1)).slice(-2) + '' + ("0" + (time.getDate())).slice(-2);
 
     this.distance = 0;
+    this.currency = 'EUR';
 
     this._fetchDataService.getJourneys(this.oDepart.id, this.oArrivee.id, date)
       .subscribe(res => {
@@ -151,15 +153,21 @@ export class JourneyComponent  {
   convertCurrency() {
     this._fetchDataService.getCurrencyRate(this.currency, this.selectedCurrency, this.formatDate())
       .subscribe(res => {
+        this.error = null;
+
         let parser = new DOMParser();
         let xml = parser.parseFromString(res, 'text/xml');
         let rate = xml.getElementsByTagName('GetConversionRateResult')[0].textContent;
 
-        this.journeys.forEach(elem => {
-          elem.prix *= parseInt(rate);
-        });
+        if(parseFloat(rate) != 0) {
+          this.journeys.forEach(elem => {
+            elem.prix *= parseFloat(rate);
+          });
 
-        this.currency = this.selectedCurrency;
+          this.currency = this.selectedCurrency;
+        } else {
+          this.error = "Erreur lors de la conversion";
+        }
       });
   }
 

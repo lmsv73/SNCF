@@ -10,27 +10,27 @@
         </mat-select>
       </mat-form-field>
       <button (click)="convertCurrency()" mat-raised-button color="primary" [disabled]="selectedCurrency == null">Convertir</button>
+      <div *ngIf="error != null">{{ error }}</div>
     </form>
   </div>
 
-  <div *ngFor="let journey of journeys">
+  <div style="display: inline-flex" *ngFor="let journey of journeys">
     <div>
       <mat-accordion>
-        <mat-expansion-panel>
+        <mat-expansion-panel style="margin-bottom: 10px;">
 
           <mat-expansion-panel-header>
-            <mat-panel-title>
+            <mat-panel-title style="width: 100px">
               {{ journey.departure_date_time | date:'HH:mm'  }} - {{ journey.arrival_date_time | date:'HH:mm'  }}
             </mat-panel-title>
 
             <mat-panel-description>
-              <div>Durée : {{ secondToDate(journey.duration) }}</div>
-              <div>{{ journey.nb_transfers == 0 ? "Direct" : journey.nb_transfers + " change." }}</div>
-              <div>{{ journey.dist }} km</div>
-              <div>{{ journey.prix | number: '1.2-2'}} {{ currency }}</div>
+              <div style="width: 100px">Durée : {{ secondToDate(journey.duration) }}</div>
+              <div style="width: 80px">{{ journey.nb_transfers == 0 ? "Direct" : journey.nb_transfers + " change." }}</div>
+              <div style="width: 80px">{{ journey.dist }} km</div>
+              <div style="width: 100px">{{ journey.prix | number: '1.2-2'}} {{ currency }}</div>
             </mat-panel-description>
           </mat-expansion-panel-header>
-
 
           <div *ngFor="let section of journey.sections | filterType: 'type' : 'public_transport'; let i = index" [attr.data-index]="i"  class="sections">
             <div class="correspondance" *ngIf="i >= 1 && compareDate(journey.sections | filterType: 'type' : 'public_transport', i, i - 1)">
@@ -46,5 +46,9 @@
         </mat-expansion-panel>
       </mat-accordion>
     </div>
+    <div>
+      <div style="width: 100px"><button mat-raised-button color="primary"  style="height: 48px;">Réserver</button></div>
+    </div>
   </div>
+
 </div>

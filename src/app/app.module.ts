@@ -11,6 +11,10 @@ import {JourneyComponent} from './journey/journey.component';
 import {MessageService} from './message.service';
 import {FilterTypePipe} from './filter-type.pipe';
 import {FetchDataService} from './fetch-data.service';
+import { AngularFireModule } from 'angularfire2';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireAuthModule } from 'angularfire2/auth';
+import {environment} from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -25,7 +29,10 @@ import {FetchDataService} from './fetch-data.service';
     MaterialModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireDatabaseModule,
+    AngularFireAuthModule
   ],
   providers: [
     MessageService,
